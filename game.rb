@@ -1,6 +1,6 @@
 require 'ruby2d'
 
-set width: 1100
+set width: 1200
 set height: 745
 @speed_x = 0.0
 @speed_y = 0.0
@@ -13,7 +13,7 @@ class Game
 
     def initialize
 
-        @ball_radius = 10
+        @ball_radius = 12
 
         @bg = Image.new('bg.png')
         @golfboll = Sprite.new(
@@ -47,8 +47,9 @@ on :mouse_up do |event|
     change_in_y = @boll_position_y - current_y
 
     @speed_x = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 10
-    p @speed_x
-    if @speed_x <20
+    if @speed_x > 25
+        @speed_x = 25
+    end
     if change_in_x < 0 
         @speed_x = -@speed_x
     end
@@ -57,7 +58,9 @@ on :mouse_up do |event|
     if change_in_y < 0 
         @speed_y = -@speed_y
     end
-
+    if @speed_y > 25
+        @speed_y = 25
+    end
     if (change_in_x).abs > (change_in_y).abs
         @bob = (change_in_x / change_in_y).abs
         @bob2 = 1
@@ -76,25 +79,21 @@ update do
         @speed_y = -@speed_y
     end
 
+    if @speed_x > 0.5 or @speed_x < -0.5
+        @speed_x = @speed_x * 0.98
+    end
+
+    if @speed_y > 0.5 or @speed_y < -0.5
+        @speed_y = @speed_y * 0.98
+    end
+
+    if @speed_x < 0.5 && @speed_y < 0.5 && @speed_x > -0.5 && @speed_y > -0.5
+        @speed_x = @speed_x * 0.90
+        @speed_y = @speed_y * 0.90
+    end
+
     game.golfboll.x += @speed_x / @bob2
     game.golfboll.y += @speed_y / @bob
-
-    if @speed_x > 0.3
-        @speed_x -= 0.1
-    elsif @speed_x < -0.3
-        @speed_x += 0.1
-    else
-        @speed_x = 0
-    end
-
-    if @speed_y > 0.3
-        @speed_y -= 0.1
-    elsif @speed_y < -0.3
-        @speed_y += 0.1
-    else
-        @speed_y = 0
-    end
-
 
 end
 
