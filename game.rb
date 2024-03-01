@@ -35,7 +35,7 @@ on :mouse_down do |event|
 
     @boll_position_x = event.x.to_f 
     @boll_position_y = event.y.to_f
-
+    
 end
 
 on :mouse_up do |event|
@@ -46,28 +46,31 @@ on :mouse_up do |event|
     change_in_x = @boll_position_x - current_x
     change_in_y = @boll_position_y - current_y
 
-    @speed_x = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 10
-    if @speed_x > 25
-        @speed_x = 25
+    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed_x == 0 and @speed_y == 0
+
+        @speed_x = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 10
+        if @speed_x > 24
+            @speed_x = 24
+        end
+        if change_in_x < 0 
+            @speed_x = -@speed_x
+        end
+        
+        @speed_y = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 10
+        if change_in_y < 0 
+            @speed_y = -@speed_y
+        end
+        if @speed_y > 24
+            @speed_y = 24
+        end
+        if (change_in_x).abs > (change_in_y).abs
+            @bob = (change_in_x / change_in_y).abs
+            @bob2 = 1
+        else
+            @bob2 = (change_in_y / change_in_x).abs
+            @bob = 1
+        end  
     end
-    if change_in_x < 0 
-        @speed_x = -@speed_x
-    end
-      
-    @speed_y = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 10
-    if change_in_y < 0 
-        @speed_y = -@speed_y
-    end
-    if @speed_y > 25
-        @speed_y = 25
-    end
-    if (change_in_x).abs > (change_in_y).abs
-        @bob = (change_in_x / change_in_y).abs
-        @bob2 = 1
-    else
-        @bob2 = (change_in_y / change_in_x).abs
-        @bob = 1
-    end  
 
 end
 
@@ -92,8 +95,15 @@ update do
         @speed_y = @speed_y * 0.90
     end
 
+    if @speed_x < 0.05 && @speed_y < 0.05 && @speed_x > -0.05 && @speed_y > -0.05
+        @speed_x = 0
+        @speed_y = 0
+    end
+
     game.golfboll.x += @speed_x / @bob2
     game.golfboll.y += @speed_y / @bob
+
+    p @speed_x
 
 end
 
