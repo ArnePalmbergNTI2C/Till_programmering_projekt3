@@ -51,7 +51,7 @@ on :mouse_down do |event|
     @not_showing_arrow_variabel = false
 
     if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0
-        p "hej"
+
         @boll_position_x = @boll_position_x + game.ball_radius
         @boll_position_y = @boll_position_y + game.ball_radius
     
@@ -79,16 +79,17 @@ on :mouse_up do |event|
 
         #sätter farten
         @speed = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 8
-        @speed_x = @speed
-        @speed_y = @speed
 
         #max fart
-        if @speed > 15
-            @speed = 15
+        if @speed > 25
+            @speed = 25
         end
-        if @speed_y > 15
-            @speed_y = 15
+        if @speed_y > 25
+            @speed_y = 25
         end
+
+        @speed_x = @speed
+        @speed_y = @speed
 
         #sätter rikitningne på bollen
         if change_in_x < 0 
