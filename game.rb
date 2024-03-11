@@ -48,16 +48,19 @@ on :mouse_down do |event|
 
     @boll_position_x = game.golfboll.x.to_f
     @boll_position_y = game.golfboll.y.to_f
+    @not_showing_arrow_variabel = false
 
     if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0
-
-        @boll_position_x = event.x.to_f + game.ball_radius
-        @boll_position_y = event.y.to_f + game.ball_radius
+        p "hej"
+        @boll_position_x = @boll_position_x + game.ball_radius
+        @boll_position_y = @boll_position_y + game.ball_radius
     
         game.arrow.add
 
         game.arrow.x = game.golfboll.x
         game.arrow.y = game.golfboll.y - 48
+
+        @not_showing_arrow_variabel = true
         
     end
 end
@@ -70,7 +73,7 @@ on :mouse_up do |event|
     change_in_x = @boll_position_x - current_x
     change_in_y = @boll_position_y - current_y   
 
-    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1
+    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @not_showing_arrow_variabel == true
 
         game.arrow.remove
 
