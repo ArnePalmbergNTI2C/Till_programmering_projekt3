@@ -46,18 +46,18 @@ game = Game.new
 
 on :mouse_down do |event|
 
-    @boll_position_x = event.x.to_f
-    @boll_position_y = event.y.to_f
+    @boll_position_x = game.golfboll.x.to_f
+    @boll_position_y = game.golfboll.y.to_f
 
     if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0
 
+        @boll_position_x = event.x.to_f + game.ball_radius
+        @boll_position_y = event.y.to_f + game.ball_radius
+    
         game.arrow.add
 
         game.arrow.x = game.golfboll.x
         game.arrow.y = game.golfboll.y - 48
-
-        @boll_position_x = game.golfboll.x.to_f + game.ball_radius
-        @boll_position_y = game.golfboll.y.to_f + game.ball_radius
         
     end
 end
@@ -70,7 +70,7 @@ on :mouse_up do |event|
     change_in_x = @boll_position_x - current_x
     change_in_y = @boll_position_y - current_y   
 
-    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0
+    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1
 
         game.arrow.remove
 
@@ -153,7 +153,6 @@ update do
     game.golfboll.x += @speed_x / @bob2
     game.golfboll.y += @speed_y / @bob
 
-    p @speed
 end
 
 show
