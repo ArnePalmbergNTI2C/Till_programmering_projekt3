@@ -2,6 +2,7 @@
 #drar musen för snabbt - cool variabel
 #darrar i väggen
 #bakgrund
+#fel rikting på bollen - bob variabel
 
 require 'ruby2d'
 
@@ -169,7 +170,7 @@ on :mouse_up do |event|
             @speed_y = -@speed_y
         end
 
-        #skillnaden i sidled. detta är fel just nu
+        #skillnaden i sidled.
         if (change_in_x).abs > (change_in_y).abs
             @bob = (change_in_x / change_in_y).abs
             @bob2 = 1
