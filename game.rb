@@ -1,97 +1,167 @@
+#ljudet är efter
+#drar musen för snabbt - cool variabel
+#darrar i väggen
+#bakgrund
+
 require 'ruby2d'
 
 set width: 1200
 set height: 745
+
 @speed_x = 0.0
 @speed_y = 0.0
 @speed = 0.0
+
 @bob = 1
 @bob2 = 1
+
 @boll_position_y = 0
 @boll_position_x = 0
+SHOT = Sound.new('swing.mp3')
+
+
+@cool = 0
 
 class Game
 
-    attr_reader :golfboll, :ball_radius, :arrow
+    attr_reader :golfboll, :ball_radius, :arrow, :black_bar, :yellow_bar, :big_black_bar, :bar_height, :golfboll_skugga
 
     def initialize
 
-        @ball_radius = 12
-
         @bg = Image.new('bg.png')
+
+        @ball_radius = 12.5
+
         @golfboll = Sprite.new(
-        'ball.png',
-        x: (Window.width / 2) - @ball_radius,
-        y: Window.height - 135.454545455 - @ball_radius,
-        width: @ball_radius * 2,
-        height: @ball_radius * 2,
-        z: 2
+            'ball.png',
+            x: (Window.width / 2) - @ball_radius,
+            y: Window.height - 135.454545455 - @ball_radius,
+            width: @ball_radius * 2,
+            height: @ball_radius * 2,
+            z: 11
+        )
+        @golfboll_skugga = Image.new(
+            'ball_shadow.png',
+            x: (Window.width / 2) - @ball_radius,
+            y: Window.height - 135.454545455 - @ball_radius + 6,
+            width: @ball_radius * 2,
+            height: @ball_radius * 2,
+            z: 10
+
         )
 
-        @arrow = Sprite.new(
+        @arrow = Image.new(
             'point1.png',
-            x: (Window.width / 2) - 12.5,
-            y: Window.height - 135.454545455 - 60,
             width: 24,
             height: 120,
             rotate: 180,
-            z: 1
+            z: 10
         )
         @arrow.remove
+
+        @bar_height = 100
+        @black_bar = Image.new(
+            'powermeter_overlay.png',
+            x: 10,
+            y: (Window.height / 2) - (@bar_height / 2),
+            z: 3,
+            height: 100
+        )
+        @black_bar.remove
+
+        @yellow_bar = Image.new(
+            'powermeter_fg.png',
+            x: 14,
+            y: (Window.height / 2) - (@bar_height / 2),
+            height: @bar_height,
+            z: 2
+        )
+        @yellow_bar.remove
+
+        @big_black_bar = Image.new(
+            'powermeter_bg.png',
+            x: 10,
+            y: (Window.height / 2) - (@bar_height / 2),
+            z: 1,
+            height: @bar_height
+        )
+        @big_black_bar.remove
+
     end
 
 end
 
 game = Game.new
 
+#när man trycker på musen
 on :mouse_down do |event|
 
-    @boll_position_x = game.golfboll.x.to_f
-    @boll_position_y = game.golfboll.y.to_f
-    @not_showing_arrow_variabel = false
+    @mouse_down_on_ball = false
 
-    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0
+    #ränkar ut position där man klicka
+    @boll_position_x = event.x.to_f
+    @boll_position_y = event.y.to_f
 
-        @boll_position_x = @boll_position_x + game.ball_radius
-        @boll_position_y = @boll_position_y + game.ball_radius
-    
-        game.arrow.add
+    #om man klickar på bollen
+    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 
 
+        #sätter positionen mitt i bollen
+        @boll_position_x = game.golfboll.x.to_f + game.ball_radius
+        @boll_position_y = game.golfboll.y.to_f + game.ball_radius
+
+        #lägger till power grejen
+        game.yellow_bar.add
+        game.black_bar.add
+        game.big_black_bar.add
+
+        #ändrar position på pilen och lägger till den
         game.arrow.x = game.golfboll.x
         game.arrow.y = game.golfboll.y - 48
+        game.arrow.add
 
-        @not_showing_arrow_variabel = true
-        
+        @mouse_down_on_ball = true
+
     end
 end
 
+#när man lyfter musen
 on :mouse_up do |event|
 
+    @mouse_down = false
+
+    #sätter värdet där man släppte musen
     current_x = event.x.to_f
     current_y = event.y.to_f
 
+    #räknar ut skillnaden i x och y led på när man tryckte och släppte musen
     change_in_x = @boll_position_x - current_x
     change_in_y = @boll_position_y - current_y   
 
-    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @not_showing_arrow_variabel == true
+    #när man klickat på bollen och släpper musen
+    if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball == true
 
+        SHOT.play
+
+        #tar bort pilen 
         game.arrow.remove
 
-        #sätter farten
-        @speed = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 8
+        #tar bort power grejen
+        game.yellow_bar.remove
+        game.black_bar.remove
+        game.big_black_bar.remove
 
-        #max fart
+        #sätter farten och max fart
+        @speed = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 8
         if @speed > 25
             @speed = 25
         end
         if @speed_y > 25
             @speed_y = 25
         end
-
         @speed_x = @speed
         @speed_y = @speed
 
-        #sätter rikitningne på bollen
+        #sätter riktningen på bollen
         if change_in_x < 0 
             @speed_x = -@speed_x
         end
@@ -99,7 +169,7 @@ on :mouse_up do |event|
             @speed_y = -@speed_y
         end
 
-        #skilnnaden i sidled. detta är fel just nu
+        #skillnaden i sidled. detta är fel just nu
         if (change_in_x).abs > (change_in_y).abs
             @bob = (change_in_x / change_in_y).abs
             @bob2 = 1
@@ -114,8 +184,17 @@ end
 
 update do
 
-    old_angle = 180
+    #hur mycket power man har
+    @cool = (Math.sqrt((@boll_position_x - Window.mouse_x.to_f) **2 + (@boll_position_y - Window.mouse_y.to_f) ** 2)) / 2
+    if @mouse_down_on_ball == true && @cool < 100
+    
+        game.yellow_bar.y = ((Window.height / 2) + (game.bar_height / 2)) - @cool
+        game.yellow_bar.height = @cool
 
+    end
+
+    #var pilen är och pekar
+    old_angle = 180
     if @speed == 0
         current_x = Window.mouse_x.to_f
         current_y = Window.mouse_y.to_f
@@ -138,13 +217,13 @@ update do
         @speed_y = -@speed_y
     end
 
-    #friktion
+    #friktion i bollen
     if @speed.abs > 0.5
-        @speed = @speed * 0.98
-        @speed_x = @speed_x * 0.98
-        @speed_y = @speed_y * 0.98
+        @speed = @speed * 0.985
+        @speed_x = @speed_x * 0.985
+        @speed_y = @speed_y * 0.985
     elsif @speed.abs <= 0.5 && @speed.abs > 0.05
-        @speed = @speed * 0.98
+        @speed = @speed * 0.90
         @speed_x = @speed_x * 0.90
         @speed_y = @speed_y * 0.90
     elsif @speed.abs <= 0.05
@@ -156,6 +235,8 @@ update do
     #uppdatera farten
     game.golfboll.x += @speed_x / @bob2
     game.golfboll.y += @speed_y / @bob
+    game.golfboll_skugga.x += @speed_x / @bob2
+    game.golfboll_skugga.y += @speed_y / @bob
 
 end
 
