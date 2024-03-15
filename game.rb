@@ -1,5 +1,3 @@
-#fel rikting på bollen - bob variabel
-
 require 'ruby2d'
 
 set width: 1091
@@ -9,8 +7,8 @@ set height: 745
 @speed_y = 0.0
 @speed = 0.0
 
-@bob = 1
-@bob2 = 1
+@bob = 1.0
+@bob2 = 1.0
 
 @boll_position_y = 0
 @boll_position_x = 0
@@ -18,7 +16,7 @@ set height: 745
 @game_started = false
 SHOT = Sound.new('swing.mp3')
 
-@cool = 0
+@cool = 0.0
 
 class Game
 
@@ -175,7 +173,7 @@ on :mouse_up do |event|
             @speed_y = -@speed_y
         end
 
-        #skillnaden i sidled.
+        #skillnaden i sidled
         if (change_in_x).abs > (change_in_y).abs
             @bob = (change_in_x / change_in_y).abs
             @bob2 = 1
