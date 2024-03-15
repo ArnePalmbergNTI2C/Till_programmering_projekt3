@@ -195,7 +195,7 @@ update do
         @cool = (Math.sqrt((@boll_position_x - Window.mouse_x.to_f) **2 + (@boll_position_y - Window.mouse_y.to_f) ** 2)) / (8.0 / (game.bar_height / game.maxspeed))
         if @mouse_down_on_ball == true
         
-            if @cool -10 < game.bar_height
+            if @cool + 10 < game.bar_height
                 game.yellow_bar.y = ((Window.height / 2) + ((game.bar_height - 10) / 2)) - @cool
                 game.yellow_bar.height = @cool
             else 
