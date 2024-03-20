@@ -1,4 +1,3 @@
-#göra bob vinkel baserad 
 #koppsnurr
 
 require 'ruby2d'
@@ -17,29 +16,19 @@ set height: 745
 @bob2 = 1.0
 @bob = 1.0
 
+@text_cool = 0.0
+
 SHOT = Sound.new('ljud/swing.mp3')
 HOLE = Sound.new('ljud/hole.mp3')
 
-
 class Game
 
-    attr_reader :golfboll, :ball_radius, :arrow, :black_bar, :yellow_bar, :big_black_bar, :bar_height, :golfboll_skugga, :change_in_size_ball, :game_started, :hole
+    attr_reader :golfboll, :ball_radius, :arrow, :black_bar, :yellow_bar, :big_black_bar, :bar_height, :golfboll_skugga, :change_in_size_ball, :game_started, :hole, :block, :text_power
 
+    #skapar massa grejer
     def initialize
 
         @bg = Image.new('grejer/bg.jpg')
-
-        @hole_size = 35
-
-        @hole = Image.new(
-            'grejer/hole.png',
-            x: (Window.width / 2) - (@hole_size / 2),
-            y: (Window.height / 5) - (@hole_size / 2),
-            width: @hole_size,
-            height: @hole_size,
-            z: 0
-
-        )
 
         @change_in_size_ball = 1
         @ball_radius = 12.5 * @change_in_size_ball
@@ -55,10 +44,22 @@ class Game
         @golfboll_skugga = Image.new(
             'grejer/ball_shadow.png',
             x: (Window.width / 2) - @ball_radius,
-            y: Window.height - (Window.height / 5) - @ball_radius + (@change_in_size_ball),
+            y: Window.height - (Window.height / 5) - @ball_radius + 6,
             width: @ball_radius * 2,
             height: @ball_radius * 2,
             z: 10
+
+        )
+
+        @hole_size = @ball_radius * 2 * @change_in_size_ball  * 1.75
+
+        @hole = Image.new(
+            'grejer/hole.png',
+            x: (Window.width / 2) - (@hole_size / 2),
+            y: (Window.height / 5) - (@hole_size / 2),
+            width: @hole_size,
+            height: @hole_size,
+            z: 0
 
         )
 
@@ -101,6 +102,39 @@ class Game
         )
         @big_black_bar.remove
 
+        size = 150
+
+        @block = Image.new(
+            'grejer/block.png',
+            x: (Window.width / 2) - (size / 2),
+            y: (Window.height / 2) - (size / 2),
+            z: 1,
+            height: size,
+            width: size
+        )
+        @block_bg = Image.new(
+            'grejer/block_bg.png',
+            x: (Window.width / 2) - (size / 2),
+            y: (Window.height / 2) - (size / 2),
+            z: 0,
+            height: size * 1.046875,
+            width: size
+        )
+
+        text_power_size = 20
+
+        @text_power = Text.new(
+            @text_cool,
+            x: 5, y: (Window.height / 2) - (@bar_height / 2) - (text_power_size),
+            font: 'grejer/text.ttf',
+            style: 'bold',
+            size: text_power_size,
+            color: 'black',
+            z: 0
+        )
+
+        @text_power.remove
+
         @game_started = true
 
     end
@@ -121,6 +155,8 @@ on :mouse_down do |event|
     #om man klickar på bollen
     if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0
 
+        game.text_power.add
+
         #sätter positionen mitt i bollen
         @boll_position_x = game.golfboll.x.to_f + game.ball_radius
         @boll_position_y = game.golfboll.y.to_f + game.ball_radius
@@ -130,7 +166,7 @@ on :mouse_down do |event|
         game.black_bar.add
         game.big_black_bar.add
 
-        #ändrar position på pilen och lägger till den. VET INTE VARFÖR 68 MEN DET FUNGERADE
+        #ändrar position på pilen och lägger till den. VET INTE VARFÖR 63 MEN DET FUNGERADE
         game.arrow.x = game.golfboll.x - 2
         game.arrow.y = (game.golfboll.y - ( 63 * game.change_in_size_ball))
         game.arrow.add
@@ -142,6 +178,8 @@ end
 
 #när man lyfter musen
 on :mouse_up do |event|
+
+    game.text_power.remove
 
     #sätter värdet där man släppte musen
     current_x = event.x.to_f
@@ -201,16 +239,20 @@ update do
 
     if game.game_started == true 
         
-        #hur mycket power man har
+        #hur mycket power man har och vad som visas
         if @mouse_down_on_ball == true
             @cool = (Math.sqrt((@boll_position_x - Window.mouse_x.to_f) **2 + (@boll_position_y - Window.mouse_y.to_f) ** 2)) / (8.0 / (game.bar_height / @maxspeed))
             
             if @cool + 10 < game.bar_height
                 game.yellow_bar.y = ((Window.height / 2) + ((game.bar_height - 10) / 2)) - @cool
                 game.yellow_bar.height = @cool
+                @text_cool = ((@cool + 10) / game.bar_height).round(2)
+                game.text_power.text = "#{@text_cool}%"
             else 
                 game.yellow_bar.y = game.yellow_bar.y = ((Window.height / 2) + ((game.bar_height - 10) / 2)) - (game.bar_height - 10)
                 game.yellow_bar.height = game.bar_height - 10
+                game.text_power.text ="1.00%"
+
             end
 
             #var pilen är och pekar
@@ -231,7 +273,8 @@ update do
             end
         end
 
-        if game.hole.contains? game.golfboll.x + game.ball_radius, game.golfboll.y + game.ball_radius and @speed < 8
+        #om man träffar hålet
+        if game.hole.contains? game.golfboll.x + game.ball_radius, game.golfboll.y + game.ball_radius
             @speed = 0
 
             HOLE.play
@@ -247,6 +290,14 @@ update do
             @speed_x = -@speed_x
         elsif game.golfboll.y < 0 or game.golfboll.y > (Window.height - game.golfboll.width)
             @speed_y = -@speed_y
+        end
+
+        #nuddar blocket
+        if game.block.contains? game.golfboll.x + game.ball_radius, game.golfboll.y or game.block.contains? game.golfboll.x + game.ball_radius, game.golfboll.y + (game.ball_radius * 2)
+            @speed_y = -@speed_y
+        end
+        if game.block.contains? game.golfboll.x, game.golfboll.y + game.ball_radius or game.block.contains? game.golfboll.x + (game.ball_radius * 2), game.golfboll.y + game.ball_radius 
+            @speed_x = -@speed_x
         end
 
         #friktion i bollen
