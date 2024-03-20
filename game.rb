@@ -65,7 +65,7 @@ class Game
         @arrow = Image.new(
             'grejer/point1.png',
             width: 28 * @change_in_size_ball,
-            height: 170 * @change_in_size_ball,
+            height: 150 * @change_in_size_ball,
             z: 10
         )
         @arrow.remove
@@ -132,7 +132,7 @@ on :mouse_down do |event|
 
         #ändrar position på pilen och lägger till den. VET INTE VARFÖR 68 MEN DET FUNGERADE
         game.arrow.x = game.golfboll.x - 2
-        game.arrow.y = (game.golfboll.y - ( 73 * game.change_in_size_ball))
+        game.arrow.y = (game.golfboll.y - ( 63 * game.change_in_size_ball))
         game.arrow.add
 
         @mouse_down_on_ball = true
