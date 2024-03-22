@@ -1,34 +1,61 @@
-require 'ruby2d'
+def vokal(sti)
 
-set width: 1091
-set height: 745
+    konsonant = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w' 'x', 'z']
 
-@text_cool = 0
-@text_power = Text.new(
-    @text_cool,
-    x: 0, y: 300,
-    font: 'grejer/text.ttf',
-    style: 'bold',
-    size: 20,
-    color: 'blue',
-    z: 0
-)
+    i = 0
+    
+    while i < konsonant.length
 
-@bar_height = 150.0
-@cool = 100.0
+        if bokstav == konsonant[i]
 
-update do
 
-    @bar_height = rand(1..10000)
-    p @cool
-    @text_cool = @bar_height
-    p @text_cool
-    @text_power.text = @text_cool
+        end
 
-    sleep (1)
+        i += 1
+    end
 
-    p @text_power
 
 end
 
-show
+def rovarsprok(string)
+
+    new_array = ""
+
+    konsonant = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w' 'x', 'z']
+
+    i = 0
+    
+    while i < string.length
+        j = 0
+        nanting = false
+        while j < konsonant.length
+            if string[i] == konsonant[j]
+                nanting = true
+                new_array << konsonant[j] + "o" + konsonant[j]
+            end
+            j +=1
+        end
+
+        if nanting == false
+            new_array << string[i]
+        end
+
+
+        i += 1
+    end
+
+    return new_array
+
+end
+
+
+hej = File.readlines("random.txt")
+p hej[0]
+
+
+p rovarsprok(hej[0])
+
+variabel = File.open("rovarspak.txt", "w")
+variabel.puts(rovarsprok(hej[0]))
+variabel.close
+

@@ -21,12 +21,16 @@ set height: 745
 SHOT = Sound.new('ljud/swing.mp3')
 HOLE = Sound.new('ljud/hole.mp3')
 
+@shot = 0
+
 class Game
 
-    attr_reader :golfboll, :ball_radius, :arrow, :black_bar, :yellow_bar, :big_black_bar, :bar_height, :golfboll_skugga, :change_in_size_ball, :game_started, :hole, :block, :text_power
+    attr_reader :golfboll, :ball_radius, :arrow, :black_bar, :yellow_bar, :big_black_bar, :bar_height, :golfboll_skugga, :change_in_size_ball, :game_started, :hole, :block, :text_power, :text_shot
 
     #skapar massa grejer
     def initialize
+
+        @shot = 0
 
         @bg = Image.new('grejer/bg.jpg')
 
@@ -135,6 +139,17 @@ class Game
 
         @text_power.remove
 
+        @text_shot = Text.new(
+            @shot,
+            x: (Window.width / 2) - (text_power_size / 2),
+            y: 1,
+            font: 'grejer/text.ttf',
+            style: 'bold',
+            size: text_power_size * 2,
+            color: 'black',
+            z: 0
+        )
+
         @game_started = true
 
     end
@@ -179,8 +194,6 @@ end
 #när man lyfter musen
 on :mouse_up do |event|
 
-    game.text_power.remove
-
     #sätter värdet där man släppte musen
     current_x = event.x.to_f
     current_y = event.y.to_f
@@ -193,6 +206,11 @@ on :mouse_up do |event|
     if game.golfboll.contains? @boll_position_x, @boll_position_y and @speed == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball == true
 
         @mouse_down_on_ball = false
+
+        game.text_power.remove
+
+        @shot += 1
+        game.text_shot.text = "#{@shot}"
 
         SHOT.play
 
@@ -279,10 +297,14 @@ update do
 
             HOLE.play
 
+            @shot = 0
+
+            game.text_shot.text = "#{@shot}"
+
             game.golfboll.x = (Window.width / 2) - game.ball_radius
             game.golfboll.y = Window.height - (Window.height / 5) - game.ball_radius + (game.change_in_size_ball)
             game.golfboll_skugga.x = (Window.width / 2) - game.ball_radius
-            game.golfboll_skugga.y = Window.height - (Window.height / 5) - game.ball_radius + (game.change_in_size_ball)
+            game.golfboll_skugga.y = Window.height - (Window.height / 5) - game.ball_radius + 6
         end
 
         #utanför skärmen ska den byta håll
@@ -322,5 +344,5 @@ update do
         game.golfboll_skugga.y += @speed_y / @bob
     end
 end
-
+ 
 show
