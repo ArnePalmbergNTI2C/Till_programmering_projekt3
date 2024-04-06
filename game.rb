@@ -40,7 +40,7 @@ class Player
 
         @golfboll = Sprite.new(
             'grejer/ball.png',
-            x: x,
+            x: x - @ball_radius,
             y: Window.height - (Window.height / 5) - @ball_radius,
             width: @ball_radius * 2,
             height: @ball_radius * 2,
@@ -49,7 +49,7 @@ class Player
         )
         @golfboll_skugga = Image.new(
             'grejer/ball_shadow.png',
-            x: x,
+            x: x - @ball_radius,
             y: Window.height - (Window.height / 5) - @ball_radius + 6,
             width: @ball_radius * 2,
             height: @ball_radius * 2,
@@ -206,7 +206,7 @@ on :mouse_down do |event|
     @boll_position_y = event.y.to_f
 
     #om man klickar på bollen
-    if player1.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0 and @speed_2 == 0
+    if player1.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0
 
         game.text_power.add
 
@@ -226,7 +226,7 @@ on :mouse_down do |event|
 
         @mouse_down_on_ball_1 = true
 
-    elsif player2.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0 and @speed_2 == 0
+    elsif player2.golfboll.contains? @boll_position_x, @boll_position_y and @speed_2 == 0
 
         game.text_power.add
 
@@ -262,7 +262,7 @@ on :mouse_up do |event|
     change_in_y = @boll_position_y - current_y   
 
     #när man klickat på bollen och släpper musen
-    if player1.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0 and @speed_2 == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball_1 == true
+    if player1.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball_1 == true
 
         @mouse_down_on_ball_1 = false
 
@@ -308,7 +308,7 @@ on :mouse_up do |event|
             @bob2_1 = (change_in_y / change_in_x).abs
             @bob_1 = 1
         end  
-    elsif player2.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0 and @speed_2 == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball_2 == true
+    elsif player2.golfboll.contains? @boll_position_x, @boll_position_y and @speed_2 == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball_2 == true
 
         @mouse_down_on_ball_2 = false
 
