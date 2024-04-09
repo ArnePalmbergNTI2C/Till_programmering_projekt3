@@ -1,11 +1,7 @@
-#koppsnurr
-
 require 'ruby2d'
 
 set width: 1091
 set height: 745
-
-@game_started = false
 
 @speed_1 = 0.0
 @speed_2 = 0.0
@@ -32,27 +28,24 @@ class Player
 
     attr_reader :golfboll, :golfboll_skugga, :arrow
 
-    def initialize(x, color)
-
-        @change_in_size_ball = 1
-        @ball_radius = 12.5 * @change_in_size_ball
-
+    #skapar massa grejer
+    def initialize(x, color, change_in_size_ball, ball_radius)
 
         @golfboll = Sprite.new(
             'grejer/ball.png',
-            x: x - @ball_radius,
-            y: Window.height - (Window.height / 5) - @ball_radius,
-            width: @ball_radius * 2,
-            height: @ball_radius * 2,
+            x: x - ball_radius,
+            y: Window.height - (Window.height / 5) - ball_radius,
+            width: ball_radius * 2,
+            height: ball_radius * 2,
             color: color,
             z: 11
         )
         @golfboll_skugga = Image.new(
             'grejer/ball_shadow.png',
-            x: x - @ball_radius,
-            y: Window.height - (Window.height / 5) - @ball_radius + 6,
-            width: @ball_radius * 2,
-            height: @ball_radius * 2,
+            x: x - ball_radius,
+            y: Window.height - (Window.height / 5) - ball_radius + 6,
+            width: ball_radius * 2,
+            height: ball_radius * 2,
             color: color,
             z: 10
 
@@ -60,8 +53,8 @@ class Player
 
         @arrow = Image.new(
             'grejer/point1.png',
-            width: 28 * @change_in_size_ball,
-            height: 150 * @change_in_size_ball,
+            width: 28 * change_in_size_ball,
+            height: 150 * change_in_size_ball,
             z: 10
         )
         @arrow.remove
@@ -74,20 +67,11 @@ class Game
     attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :game_started, :hole, :block, :text_power, :text_shot_1, :text_shot_2
 
     #skapar massa grejer
-    def initialize
-
-        @change_in_size_ball = 1
-        @ball_radius = 12.5 * @change_in_size_ball
-
-        @shot_1 = 0
-        @shot_2 = 0
+    def initialize(change_in_size_ball, ball_radius)
 
         @bg = Image.new('grejer/bg.jpg')
 
-        @change_in_size_ball = 1
-        @ball_radius = 12.5 * @change_in_size_ball
-
-        @hole_size = @ball_radius * 2 * @change_in_size_ball  * 1.75
+        @hole_size = ball_radius * 2 * change_in_size_ball  * 1.75
 
         @hole = Image.new(
             'grejer/hole.png',
@@ -164,7 +148,7 @@ class Game
         @text_power.remove
 
         @text_shot_1 = Text.new(
-            @shot_1,
+            0,
             x: 100,
             y: 1,
             font: 'grejer/text.ttf',
@@ -175,7 +159,7 @@ class Game
         )
 
         @text_shot_2 = Text.new(
-            @shot_2,
+            0,
             x: 991,
             y: 1,
             font: 'grejer/text.ttf',
@@ -191,9 +175,9 @@ class Game
 
 end
 
-game = Game.new
-player1 = Player.new(100, "yellow")
-player2 = Player.new(991, "blue")
+game = Game.new(@change_in_size_ball, @ball_radius)
+player1 = Player.new(100, "yellow", @change_in_size_ball, @ball_radius)
+player2 = Player.new(991, "blue", @change_in_size_ball, @ball_radius)
 
 #när man trycker på musen
 on :mouse_down do |event|
@@ -361,9 +345,10 @@ end
 
 update do
 
+    #om spelet är startat
     if game.game_started == true 
         
-        #hur mycket power man har och vad som visas
+        #hur mycket power man har och vad som visas då
         if @mouse_down_on_ball_1 == true
             @cool = (Math.sqrt((@boll_position_x - Window.mouse_x.to_f) **2 + (@boll_position_y - Window.mouse_y.to_f) ** 2)) / (8.0 / (game.bar_height / @maxspeed))
             
@@ -379,7 +364,7 @@ update do
 
             end
 
-            #var pilen är och pekar
+            #var pilen är och pekar för boll 1
             old_angle = 180
             if @speed_1 == 0
                 current_x = Window.mouse_x.to_f
@@ -412,7 +397,7 @@ update do
 
             end
 
-            #var pilen är och pekar
+            #var pilen är och pekar för boll 2
             old_angle = 180
             if @speed_2 == 0
                 current_x = Window.mouse_x.to_f
@@ -462,18 +447,21 @@ update do
             player2.golfboll_skugga.y = Window.height - (Window.height / 5) - @ball_radius + 6
         end
 
-        #utanför skärmen ska den byta håll
+        #nuddar väggen ska bollen byta rikting
         if player1.golfboll.x < 0 or player1.golfboll.x > (Window.width - player1.golfboll.width) 
             @speed_x_1 = -@speed_x_1
-        elsif player1.golfboll.y < 0 or player1.golfboll.y > (Window.height - player1.golfboll.width)
+        end
+        if player1.golfboll.y < 0 or player1.golfboll.y > (Window.height - player1.golfboll.width)
             @speed_y_1 = -@speed_y_1
-        elsif player2.golfboll.x < 0 or player2.golfboll.x > (Window.width - player1.golfboll.width) 
+        end
+        if player2.golfboll.x < 0 or player2.golfboll.x > (Window.width - player1.golfboll.width) 
             @speed_x_2 = -@speed_x_2
-        elsif player2.golfboll.y < 0 or player2.golfboll.y > (Window.height - player1.golfboll.width)
+        end
+        if player2.golfboll.y < 0 or player2.golfboll.y > (Window.height - player1.golfboll.width)
             @speed_y_2 = -@speed_y_2
         end
 
-        #nuddar blocket
+        #nuddar blocket ska bollen byta rikting
         if game.block.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y or game.block.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y + (@ball_radius * 2)
             @speed_y_1 = -@speed_y_1
         elsif game.block.contains? player1.golfboll.x, player1.golfboll.y + @ball_radius or game.block.contains? player1.golfboll.x + (@ball_radius * 2), player1.golfboll.y + @ball_radius 
@@ -484,7 +472,7 @@ update do
             @speed_x_2 = -@speed_x_2
         end
 
-        #friktion i bollen
+        #friktion i boll1
         if @speed_1.abs > 0.5
             @speed_1 = @speed_1 * 0.985
             @speed_x_1 = @speed_x_1 * 0.985
@@ -499,6 +487,7 @@ update do
             @speed_y_1 = 0
         end
 
+        #friktion i boll2
         if @speed_2.abs > 0.5
             @speed_2 = @speed_2 * 0.985
             @speed_x_2 = @speed_x_2 * 0.985
