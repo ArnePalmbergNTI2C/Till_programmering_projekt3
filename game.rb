@@ -447,29 +447,43 @@ update do
             player2.golfboll_skugga.y = Window.height - (Window.height / 5) - @ball_radius + 6
         end
 
-        #nuddar väggen ska bollen byta rikting
-        if player1.golfboll.x < 0 or player1.golfboll.x > (Window.width - player1.golfboll.width) 
-            @speed_x_1 = -@speed_x_1
-        end
-        if player1.golfboll.y < 0 or player1.golfboll.y > (Window.height - player1.golfboll.width)
-            @speed_y_1 = -@speed_y_1
-        end
-        if player2.golfboll.x < 0 or player2.golfboll.x > (Window.width - player1.golfboll.width) 
-            @speed_x_2 = -@speed_x_2
-        end
-        if player2.golfboll.y < 0 or player2.golfboll.y > (Window.height - player1.golfboll.width)
-            @speed_y_2 = -@speed_y_2
-        end
+        #nuddar något
+        for i in 0..36 do
 
-        #nuddar blocket ska bollen byta rikting
-        if game.block.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y or game.block.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y + (@ball_radius * 2)
-            @speed_y_1 = -@speed_y_1
-        elsif game.block.contains? player1.golfboll.x, player1.golfboll.y + @ball_radius or game.block.contains? player1.golfboll.x + (@ball_radius * 2), player1.golfboll.y + @ball_radius 
-            @speed_x_1 = -@speed_x_1
-        elsif game.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y or game.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + (@ball_radius * 2)
-            @speed_y_2 = -@speed_y_2
-        elsif game.block.contains? player2.golfboll.x, player2.golfboll.y + @ball_radius or game.block.contains? player2.golfboll.x + (@ball_radius * 2), player2.golfboll.y + @ball_radius 
-            @speed_x_2 = -@speed_x_2
+            #nuddar väggen ska bollen byta rikting
+            radian = ((i *10) * Math::PI) / 180 
+            cos = Math.cos(radian) * 12.5
+            sin =  Math.sin(radian) * 12.5
+            
+            x_player_1 = player1.golfboll.x + @ball_radius
+            y_player_1 = player1.golfboll.y + @ball_radius
+            if x_player_1 - cos > Window.width or x_player_1 + cos < 0
+                @speed_x_1 = -@speed_x_1
+            end
+            if y_player_1 - sin > Window.height or y_player_1 + sin < 0
+                @speed_y_1 = -@speed_y_1
+            end
+    
+            x_player_2 = player2.golfboll.x + @ball_radius
+            y_player_2 = player2.golfboll.y + @ball_radius
+            if x_player_2 - cos > Window.width or x_player_2 + cos < 0
+                @speed_x_2 = -@speed_x_2
+            end
+            if y_player_2 - sin > Window.height or y_player_2 + sin < 0
+                @speed_y_2 = -@speed_y_2
+            end
+    
+            #nuddar blocket ska bollen byta rikting
+            #if game.block.contains? x_player_1 + cos, y_player_1 + sin
+               # @speed_y_1 = -@speed_y_1
+            #elsif game.block.contains? player1.golfboll.x, player1.golfboll.y + @ball_radius or game.block.contains? player1.golfboll.x + (@ball_radius * 2), player1.golfboll.y + @ball_radius 
+                #@speed_x_1 = -@speed_x_1
+           #elsif game.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y or game.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + (@ball_radius * 2)
+                #@speed_y_2 = -@speed_y_2
+           # elsif game.block.contains? player2.golfboll.x, player2.golfboll.y + @ball_radius or game.block.contains? player2.golfboll.x + (@ball_radius * 2), player2.golfboll.y + @ball_radius 
+               # @speed_x_2 = -@speed_x_2
+            #end
+
         end
 
         #friktion i boll1
@@ -512,6 +526,7 @@ update do
         player2.golfboll_skugga.x += @speed_x_2 / @bob2_2
         player2.golfboll_skugga.y += @speed_y_2 / @bob_2
     end
+
 end
  
 show
