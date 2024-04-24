@@ -24,6 +24,8 @@ HOLE = Sound.new('ljud/hole.mp3')
 @shot_1 = 0
 @shot_2 = 0
 
+@level = 0
+
 class Player
 
     attr_reader :golfboll, :golfboll_skugga, :arrow
@@ -418,6 +420,7 @@ update do
 
         #om man träffar hålet
         if game.hole.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y + @ball_radius
+            @level += 1
             @speed_1 = 0
 
             HOLE.play
@@ -432,7 +435,8 @@ update do
             player1.golfboll_skugga.y = Window.height - (Window.height / 5) - @ball_radius + 6
 
         elsif game.hole.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + @ball_radius
-
+            @level += 1
+            level_class = Level_class
             @speed_2 = 0
 
             HOLE.play
@@ -456,21 +460,50 @@ update do
             sin =  Math.sin(radian) * 12.5
             
             x_player_1 = player1.golfboll.x + @ball_radius
-            y_player_1 = player1.golfboll.y + @ball_radius
-            if x_player_1 - cos > Window.width or x_player_1 + cos < 0
-                @speed_x_1 = -@speed_x_1
-            end
-            if y_player_1 - sin > Window.height or y_player_1 + sin < 0
-                @speed_y_1 = -@speed_y_1
-            end
-    
+            y_player_1 = player1.golfboll.y + @ball_radius  
+
             x_player_2 = player2.golfboll.x + @ball_radius
             y_player_2 = player2.golfboll.y + @ball_radius
-            if x_player_2 - cos > Window.width or x_player_2 + cos < 0
-                @speed_x_2 = -@speed_x_2
+
+            if x_player_1 - cos > Window.width
+                @speed_x_1 = -@speed_x_1
+                player1.golfboll.x -= 6
+                player1.golfboll_skugga.x -= 6
+
+            elsif x_player_1 + cos < 0
+                @speed_x_1 = -@speed_x_1
+                player1.golfboll.x += 6
+                player1.golfboll_skugga.x += 6
             end
-            if y_player_2 - sin > Window.height or y_player_2 + sin < 0
+            if y_player_1 - sin > Window.height
+                @speed_y_1 = -@speed_y_1
+                player1.golfboll.y -= 6
+                player1.golfboll_skugga.y -= 6
+
+            elsif y_player_1 + sin < 0
+                @speed_y_1 = -@speed_y_1
+                player1.golfboll.y += 6
+                player1.golfboll_skugga.y += 6
+            end
+            if x_player_2 - cos > Window.width
+                @speed_x_2 = -@speed_x_2
+                player2.golfboll.x -= 6
+                player2.golfboll_skugga.x -= 6
+
+            elsif x_player_2 + cos < 0
+                @speed_x_2 = -@speed_x_2
+                player2.golfboll.x += 6
+                player2.golfboll_skugga.x += 6
+            end
+            if y_player_2 - sin > Window.height
                 @speed_y_2 = -@speed_y_2
+                player2.golfboll.y -= 6
+                player2.golfboll_skugga.y -= 6
+
+            elsif y_player_2 + sin < 0
+                @speed_y_2 = -@speed_y_2
+                player2.golfboll.y += 6
+                player2.golfboll_skugga.y += 6
             end
     
             #nuddar blocket ska bollen byta rikting
