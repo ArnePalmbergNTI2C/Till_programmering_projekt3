@@ -24,7 +24,8 @@ HOLE = Sound.new('ljud/hole.mp3')
 @shot_1 = 0
 @shot_2 = 0
 
-@level = 0
+@level = 1
+@level_counter = 0
 
 class Player
 
@@ -61,12 +62,11 @@ class Player
         )
         @arrow.remove
     end
-
 end
 
 class Game
 
-    attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :game_started, :hole, :block, :text_power, :text_shot_1, :text_shot_2
+    attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :game_started, :hole, :block, :block_bg, :text_power, :text_shot_1, :text_shot_2
 
     #skapar massa grejer
     def initialize(change_in_size_ball, ball_radius)
@@ -420,35 +420,20 @@ update do
 
         #om man träffar hålet
         if game.hole.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y + @ball_radius
-            @level += 1
             @speed_1 = 0
-
-            HOLE.play
-
-            @shot_1 = 0
-
-            game.text_shot_1.text = "#{@shot_1}"
-
-            player1.golfboll.x = 100
-            player1.golfboll.y = Window.height - (Window.height / 5) - @ball_radius + (@change_in_size_ball)
-            player1.golfboll_skugga.x = 100
-            player1.golfboll_skugga.y = Window.height - (Window.height / 5) - @ball_radius + 6
-
+            player1.golfboll.x = 1000
+            player1.golfboll.remove
+            player1.golfboll_skugga.x = 1000
+            player1.golfboll_skugga.remove
+            in_hole(game, player1, player2)
         elsif game.hole.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + @ball_radius
-            @level += 1
-            level_class = Level_class
             @speed_2 = 0
+            player2.golfboll.x = 1000
+            player2.golfboll.remove
+            player2.golfboll_skugga.x = 1000
+            player2.golfboll_skugga.remove
+            in_hole(game, player1, player2)
 
-            HOLE.play
-
-            @shot_2 = 0
-
-            game.text_shot_2.text = "#{@shot_2}"
-
-            player2.golfboll.x = 991
-            player2.golfboll.y = Window.height - (Window.height / 5) - @ball_radius + (@change_in_size_ball)
-            player2.golfboll_skugga.x = 991
-            player2.golfboll_skugga.y = Window.height - (Window.height / 5) - @ball_radius + 6
         end
 
         #nuddar något
@@ -508,6 +493,7 @@ update do
     
             #nuddar blocket ska bollen byta rikting
             #if game.block.contains? x_player_1 + cos, y_player_1 + sin
+        
                # @speed_y_1 = -@speed_y_1
             #elsif game.block.contains? player1.golfboll.x, player1.golfboll.y + @ball_radius or game.block.contains? player1.golfboll.x + (@ball_radius * 2), player1.golfboll.y + @ball_radius 
                 #@speed_x_1 = -@speed_x_1
@@ -559,6 +545,56 @@ update do
         player2.golfboll_skugga.x += @speed_x_2 / @bob2_2
         player2.golfboll_skugga.y += @speed_y_2 / @bob_2
     end
+
+    def in_hole(game, player1, player2)
+
+        HOLE.play
+    
+        @level_counter += 1
+        if @level_counter == 2
+            @level += 1
+        end
+    
+        case @level
+        when 2
+            level2(game, player1, player2)
+        end
+    
+    end
+    
+    def level2(game, player1, player2)
+    
+        @level_counter = 0
+
+        @total_shot_1 = @shot_1
+        @total_shot_2 = @shot_2
+    
+        @shot_2 = 0
+        @shot_1 = 0
+
+        game.text_shot_1.text = "#{@shot_1}"
+        game.text_shot_2.text = "#{@shot_2}"
+
+
+        game.block.x += 100
+        game.block_bg.x += 100
+
+        player1.golfboll.add
+        player1.golfboll.x = (Window.width / 11) - @ball_radius
+        player1.golfboll.y = (Window.height / 5) - @ball_radius
+        player1.golfboll_skugga.x = (Window.width / 11) - @ball_radius
+        player1.golfboll_skugga.y = (Window.height / 5) - @ball_radius
+
+        player2.golfboll.add
+        player2.golfboll.x = (Window.width / 11) - @ball_radius
+        player2.golfboll.y = (Window.height / (15.0/12.0)) - @ball_radius
+        player2.golfboll_skugga.x = (Window.width / 11) - @ball_radius
+        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius
+
+        
+
+    end
+
 
 end
  
