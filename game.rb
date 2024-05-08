@@ -159,8 +159,7 @@ class Game
 end
 class Block 
 
-    attr_reader :block, :block_bg
-
+    attr_reader :block, :block_bg, :block2, :block_bg2, :block3, :block_bg3
 
     def initialize(level)
         size = 150
@@ -170,7 +169,7 @@ class Block
 
             @block = Image.new(
                 'grejer/block.png',
-                x: (Window.width / 2) - (size / 2),
+                x: 0,
                 y: (Window.height / 2) - (size / 2),
                 z: 1,
                 height: size,
@@ -178,7 +177,7 @@ class Block
             )
             @block_bg = Image.new(
                 'grejer/block_bg.png',
-                x: (Window.width / 2) - (size / 2),
+                x: 0,
                 y: (Window.height / 2) - (size / 2),
                 z: 0,
                 height: size * 1.046875,
@@ -187,7 +186,7 @@ class Block
         elsif level == 2
             @block = Image.new(
                 'grejer/block.png',
-                x: (Window.width / 3) - (size / 2),
+                x: 100,
                 y: (Window.height / 2) - (size / 2),
                 z: 1,
                 height: size,
@@ -195,17 +194,16 @@ class Block
             )
             @block_bg = Image.new(
                 'grejer/block_bg.png',
-                x: (Window.width / 3) - (size / 2),
+                x: 100,
                 y: (Window.height / 2) - (size / 2),
                 z: 0,
                 height: size * 1.046875,
                 width: size
             ) 
         elsif level == 3
-            p "h"
             @block = Image.new(
                 'grejer/block.png',
-                x: (Window.width / 1) - (size / 2),
+                x: 500,
                 y: (Window.height / 2) - (size / 2),
                 z: 1,
                 height: size,
@@ -213,7 +211,7 @@ class Block
             )
             @block_bg = Image.new(
                 'grejer/block_bg.png',
-                x: (Window.width / 1) - (size / 2),
+                x: 500,
                 y: (Window.height / 2) - (size / 2),
                 z: 0,
                 height: size * 1.046875,
@@ -599,24 +597,21 @@ update do
         @level_counter += 1
         if @level_counter == 2
             @level += 1
+            case @level
+            when 2
+                level2(game, player1, player2, block)
+            when 3
+                level3(game, player1, player2, block)
+            end
         end
 
-        case @level
-        when 2
-            level2(game, player1, player2, block)
-        when 3
-            level3(game, player1, player2, block)
-        end
-        
     end
     
     def level2(game, player1, player2, block)
 
         block.block.remove
         block.block_bg.remove
-        block = Block.new(@level)
-
-        @level_counter = 0
+        block2 = Block.new(@level)
 
         @total_shot_1 = @shot_1
         @total_shot_2 = @shot_2
@@ -624,66 +619,64 @@ update do
         @shot_2 = 0
         @shot_1 = 0
 
-        @level += 1
-
         game.text_shot_1.text = "#{@shot_1}"
         game.text_shot_2.text = "#{@shot_2}"
 
-
-        block.block.x += 300
-        block.block_bg.x += 300
-
         player1.golfboll.add
+        player1.golfboll_skugga.add
         player1.golfboll.x = (Window.width / 11) - @ball_radius
         player1.golfboll.y = (Window.height / 5) - @ball_radius
         player1.golfboll_skugga.x = (Window.width / 11) - @ball_radius
         player1.golfboll_skugga.y = (Window.height / 5) - @ball_radius
 
         player2.golfboll.add
+        player2.golfboll_skugga.add
         player2.golfboll.x = (Window.width / 11) - @ball_radius
         player2.golfboll.y = (Window.height / (15.0/12.0)) - @ball_radius
         player2.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius
+        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius + 6
 
+        @level_counter = 0
     end
 
     def level3(game, player1, player2, block)
 
-        block.block.remove
-        block.block_bg.remove
-        block = Block.new(@level)
+        block.block2.remove
+        block.block_bg2.remove
+        block3 = Block.new(@level)
     
-        @level_counter = 0
-
-        @total_shot_1 = @shot_1
-        @total_shot_2 = @shot_2
+        @total_shot_1 += @shot_1
+        @total_shot_2 += @shot_2
     
         @shot_2 = 0
         @shot_1 = 0
 
-        @level += 1
-
         game.text_shot_1.text = "#{@shot_1}"
         game.text_shot_2.text = "#{@shot_2}"
 
-
-        block.block.x += 300
-        block.block_bg.x += 300
-
         player1.golfboll.add
+        player1.golfboll_skugga.add
         player1.golfboll.x = (Window.width / 11) - @ball_radius
         player1.golfboll.y = (Window.height / 5) - @ball_radius
         player1.golfboll_skugga.x = (Window.width / 11) - @ball_radius
         player1.golfboll_skugga.y = (Window.height / 5) - @ball_radius
 
         player2.golfboll.add
+        player2.golfboll_skugga.add
         player2.golfboll.x = (Window.width / 11) - @ball_radius
         player2.golfboll.y = (Window.height / (15.0/12.0)) - @ball_radius
         player2.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius
+        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius + 6
+
+        @level_counter = 0
 
     end
 
+    def level4(game, player1, player2, block)
+
+        game.hole.remove
+
+    end
 end
  
 show
