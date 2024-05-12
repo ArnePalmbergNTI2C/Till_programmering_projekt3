@@ -176,7 +176,7 @@ class Block
             )
             @block_bg = Image.new(
                 'grejer/block_bg.png',
-                x: 0,
+                x: i,
                 y: (Window.height / 2) - (size / 2),
                 z: 0,
                 height: size * 1.046875,
@@ -185,7 +185,7 @@ class Block
         elsif level == 2
             @block_2 = Image.new(
                 'grejer/block.png',
-                x: 100,
+                x: 1000,
                 y: (Window.height / 2) - (size / 2),
                 z: 1,
                 height: size,
@@ -193,7 +193,7 @@ class Block
             )
             @block_bg_2 = Image.new(
                 'grejer/block_bg.png',
-                x: 100,
+                x: 10000,
                 y: (Window.height / 2) - (size / 2),
                 z: 0,
                 height: size * 1.046875,
@@ -202,7 +202,7 @@ class Block
         elsif level == 3
             @block_3 = Image.new(
                 'grejer/block.png',
-                x: 500,
+                x: i,
                 y: (Window.height / 2) - (size / 2),
                 z: 1,
                 height: size,
@@ -210,7 +210,7 @@ class Block
             )
             @block_bg_3 = Image.new(
                 'grejer/block_bg.png',
-                x: 500,
+                x: i,
                 y: (Window.height / 2) - (size / 2),
                 z: 0,
                 height: size * 1.046875,
@@ -225,14 +225,16 @@ game = Game.new(@change_in_size_ball, @ball_radius)
 player1 = Player.new(100, "yellow", @change_in_size_ball, @ball_radius)
 player2 = Player.new(991, "blue", @change_in_size_ball, @ball_radius)
 
-i = Window.width
 j = 0
+i = (Window.width / 22)
 
-while j < 3
-    i -= Window.width / 5
-    block_cla = Block.new(@level, i)
-    j += 1
-end
+@block_array = [
+    Block.new(@level, i + (Window.width / 22)),
+    Block.new(@level, i + 5*(Window.width / 22)*6),
+    Block.new(@level, i + (Window.width / 22)*11),
+    Block.new(@level, i + (Window.width / 22)*16)
+
+]
 
 #när man trycker på musen
 on :mouse_down do |event|
@@ -618,7 +620,8 @@ update do
 
         block_cla.block.remove
         block_cla.block_bg.remove
-        @block_cla = Block.new(@level)
+        i = 100
+        @block_cla = Block.new(@level, i)
 
         @total_shot_1 = @shot_1
         @total_shot_2 = @shot_2
@@ -653,7 +656,8 @@ update do
 
         @block_cla.block_2.remove
         @block_cla.block_bg_2.remove
-        block_cla = Block.new(@level)
+        i = 100
+        block_cla = Block.new(@level, i)
     
         @total_shot_1 += @shot_1
         @total_shot_2 += @shot_2
