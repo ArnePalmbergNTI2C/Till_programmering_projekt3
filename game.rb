@@ -31,6 +31,8 @@ HOLE = Sound.new('ljud/hole.mp3')
 @level_counter = 0
 
 @end_game = false
+@start_bol = true
+
 
 #klassen för olika spelare
 class Player
@@ -73,7 +75,7 @@ end
 #klassen för spelet
 class Game
 
-    attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :game_started, :hole, :text_power, :text_shot_1, :text_shot_2, :hole_size
+    attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :hole, :text_power, :text_shot_1, :text_shot_2, :hole_size, :start_screen
 
     #skapar massa grejer
     def initialize(change_in_size_ball, ball_radius)
@@ -141,7 +143,7 @@ class Game
         @text_shot_1 = Text.new(
             0,
             x: 105,
-            y: 1,
+            y: -10,
             font: 'grejer/text.ttf',
             size: text_power_size * 3,
             color: 'yellow',
@@ -150,16 +152,23 @@ class Game
 
         @text_shot_2 = Text.new(
             0,
-            x: 966,
-            y: 1,
+            x: 947,
+            y: -10,
             font: 'grejer/text.ttf',
             size: text_power_size * 3,
             color: 'blue',
             z: 3
         )
 
-        @game_started = true
-
+        @start_screen = Image.new(
+            'grejer/start.webp',
+            x: 0,
+            y: 0,
+            z: 10000000000,
+            height: Window.height,
+            width: Window.width
+        )
+        
     end
 
 end
@@ -245,6 +254,13 @@ i = (Window.width / 22.0)
 
 #när man trycker på musen
 on :mouse_down do |event|
+
+    #tar bort start skärmen
+    if @start_bol == true
+        @game_started = true
+        game.start_screen.remove
+        @start_bol = false
+    end
 
     @mouse_down_on_ball_1 = false
     @mouse_down_on_ball_2 = false
@@ -418,7 +434,7 @@ end
 update do
 
     #om spelet är startat
-    if game.game_started == true 
+    if @game_started == true 
         
         #hur mycket power man har och vad som visas då
         if @mouse_down_on_ball_1 == true
@@ -760,6 +776,9 @@ update do
         @shot_1 = 0
         @shot_2 = 0
 
+        game.text_shot_1.text = "#{@shot_1}"
+        game.text_shot_2.text = "#{@shot_2}"
+
         game.hole.remove
         @block_array.each do |block|
             block.block_bg.remove
@@ -774,7 +793,7 @@ update do
         @text_1 = Text.new(
             "Player one = #{@total_shot_1} strokes",
             x: (Window.width / (22.0/7.0)),
-            y: (Window.height / 2.0) - (text_size_end_2),
+            y: (Window.height / 2.0) - (text_size_end_2) - 28,
             font: 'grejer/text.ttf',
             size: text_size_end_2,
             color: 'black',
@@ -783,7 +802,7 @@ update do
         @text_2 = Text.new(
             "Player two = #{@total_shot_2} strokes",
             x: (Window.width / (22.0/7.0)),
-            y: (Window.height / 2.0),
+            y: (Window.height / 2.0) - 28,
             font: 'grejer/text.ttf',
             size: text_size_end_2,
             color: 'black',
@@ -801,7 +820,7 @@ update do
         @text_3 = Text.new(
             "Winner = #{@winner}",
             x: (Window.width / (22.0/7.0)),
-            y: (Window.height / 2.0) + (text_size_end_2),
+            y: (Window.height / 2.0) + (text_size_end_2) - 28,
             font: 'grejer/text.ttf',
             size: text_size_end_2,
             color: 'black',
