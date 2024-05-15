@@ -728,17 +728,17 @@ update do
 
         player1.golfboll.add
         player1.golfboll_skugga.add 
-        player1.golfboll.x = (Window.width / 11) - @ball_radius
-        player1.golfboll.y = (Window.height / (15.0/13.0)) - @ball_radius
-        player1.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player1.golfboll_skugga.y = (Window.height / (15.0/13.0)) - @ball_radius + 6
+        player1.golfboll.x = (Window.width / (22.0/1.5)) - @ball_radius
+        player1.golfboll.y = (Window.height / 2) - @ball_radius
+        player1.golfboll_skugga.x = (Window.width / (22.0/1.5)) - @ball_radius
+        player1.golfboll_skugga.y = (Window.height / 2) - @ball_radius + 6
     
         player2.golfboll.add
         player2.golfboll_skugga.add
-        player2.golfboll.x = (Window.width / (22.0/20.0)) - @ball_radius
-        player2.golfboll.y = (Window.height / (15.0/13.0)) - @ball_radius
-        player2.golfboll_skugga.x = (Window.width / (22.0/20.0)) - @ball_radius
-        player2.golfboll_skugga.y = (Window.height / (15.0/13.0)) - @ball_radius + 6
+        player2.golfboll.x = (Window.width / (22.0/20.5)) - @ball_radius
+        player2.golfboll.y = (Window.height / 2) - @ball_radius
+        player2.golfboll_skugga.x = (Window.width / (22.0/20.5)) - @ball_radius
+        player2.golfboll_skugga.y = (Window.height / 2) - @ball_radius + 6
     
         @level_counter = 0
 
