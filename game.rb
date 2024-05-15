@@ -1,6 +1,3 @@
-#filma
-#skriva reflektion
-
 require 'ruby2d'
 
 set width: 1091
@@ -358,9 +355,6 @@ on :mouse_up do |event|
         if @speed_1 > @maxspeed
             @speed_1 = @maxspeed
         end
-        if @speed_y_1 > @maxspeed
-            @speed_y_1 = @maxspeed
-        end
         @speed_x_1 = @speed_1
         @speed_y_1 = @speed_1
 
@@ -404,9 +398,7 @@ on :mouse_up do |event|
         if @speed_2 > @maxspeed
             @speed_2 = @maxspeed
         end
-        if @speed_y_2 > @maxspeed
-            @speed_y_2 = @maxspeed
-        end
+
         @speed_x_2 = @speed_2
         @speed_y_2 = @speed_2
 
@@ -636,6 +628,8 @@ update do
         player2.golfboll.y += @speed_y_2 / @bob_2
         player2.golfboll_skugga.x += @speed_x_2 / @bob2_2
         player2.golfboll_skugga.y += @speed_y_2 / @bob_2
+
+
     end
 
     #om bollen nuddar hålet startas denna funktion 
