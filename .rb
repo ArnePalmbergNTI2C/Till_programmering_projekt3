@@ -1,3 +1,8 @@
+#göra klart programmet
+#kommentera allt
+#filma
+#skriva reflektion
+
 require 'ruby2d'
 
 set width: 1091
@@ -6,7 +11,7 @@ set height: 745
 @speed_1 = 0.0
 @speed_2 = 0.0
 
-@maxspeed = 23
+@maxspeed = 23.0
 
 @bob2_1 = 1.0
 @bob_1 = 1.0
@@ -18,7 +23,7 @@ set height: 745
 SHOT = Sound.new('ljud/swing.mp3')
 HOLE = Sound.new('ljud/hole.mp3')
 
-@change_in_size_ball = 1
+@change_in_size_ball = 1.0
 @ball_radius = 12.5 * @change_in_size_ball
 
 @shot_1 = 0
@@ -27,6 +32,9 @@ HOLE = Sound.new('ljud/hole.mp3')
 @level = 1
 @level_counter = 0
 
+@end_game = false
+
+#klassen för olika spelare
 class Player
 
     attr_reader :golfboll, :golfboll_skugga, :arrow
@@ -37,16 +45,16 @@ class Player
         @golfboll = Sprite.new(
             'grejer/ball.png',
             x: x - ball_radius,
-            y: Window.height - (Window.height / 5) - ball_radius,
-            width: ball_radius * 2,
-            height: ball_radius * 2,
+            y: Window.height - (Window.height / 5.0) - ball_radius,
+            width: ball_radius * 2.0,
+            height: ball_radius * 2.0,
             color: color,
             z: 11
         )
         @golfboll_skugga = Image.new(
             'grejer/ball_shadow.png',
             x: x - ball_radius,
-            y: Window.height - (Window.height / 5) - ball_radius + 6,
+            y: Window.height - (Window.height / 5.0) - ball_radius + 6,
             width: ball_radius * 2,
             height: ball_radius * 2,
             color: color,
@@ -64,21 +72,22 @@ class Player
     end
 end
 
+#klassen för spelet
 class Game
 
-    attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :game_started, :hole, :text_power, :text_shot_1, :text_shot_2
+    attr_reader :black_bar, :yellow_bar, :big_black_bar, :bar_height, :game_started, :hole, :text_power, :text_shot_1, :text_shot_2, :hole_size
 
     #skapar massa grejer
     def initialize(change_in_size_ball, ball_radius)
 
         @bg = Image.new('grejer/bg.jpg')
 
-        @hole_size = ball_radius * 2 * change_in_size_ball  * 1.75
+        @hole_size = (Window.width / 22.0) * change_in_size_ball
 
         @hole = Image.new(
             'grejer/hole.png',
-            x: (Window.width / 2) - (@hole_size / 2),
-            y: (Window.height / 5) - (@hole_size / 2),
+            x: (Window.width / 2.0) - (@hole_size / 2.0),
+            y: (Window.height / 5.0) - (@hole_size / 2.0),
             width: @hole_size,
             height: @hole_size,
             z: 0
@@ -89,7 +98,7 @@ class Game
         @black_bar = Image.new(
             'grejer/powermeter_overlay.png',
             x: 10,
-            y: (Window.height / 2) - (@bar_height / 2),
+            y: (Window.height / 2.0) - (@bar_height / 2.0),
             z: 3,
             height: @bar_height,
             width: @bar_height / 6.25
@@ -99,7 +108,7 @@ class Game
         @yellow_bar = Image.new(
             'grejer/powermeter_fg.png',
             x: 14,
-            y: (Window.height / 2) - (@bar_height / 2),
+            y: (Window.height / 2.0) - (@bar_height / 2.0),
             height: @bar_height,
             z: 2,
             width: (@bar_height / 6.25) - 8
@@ -109,7 +118,7 @@ class Game
         @big_black_bar = Image.new(
             'grejer/powermeter_bg.png',
             x: 10,
-            y: (Window.height / 2) - (@bar_height / 2),
+            y: (Window.height / 2.0) - (@bar_height / 2.0),
             z: 1,
             height: @bar_height,
             width: @bar_height / 6.25
@@ -120,10 +129,11 @@ class Game
 
         @text_power = Text.new(
             @text_cool,
-            x: 5, y: (Window.height / 2) - (@bar_height / 2) - (text_power_size),
+            x: 5,
+            y: (Window.height / 2.0) - (@bar_height / 2) - (text_power_size),
             font: 'grejer/text.ttf',
-            style: 'bold',
             size: text_power_size,
+            style: 'bold',
             color: 'black',
             z: 0
         )
@@ -132,24 +142,22 @@ class Game
 
         @text_shot_1 = Text.new(
             0,
-            x: 100,
+            x: 105,
             y: 1,
             font: 'grejer/text.ttf',
-            style: 'bold',
-            size: text_power_size * 2,
+            size: text_power_size * 3,
             color: 'yellow',
-            z: 0
+            z: 3
         )
 
         @text_shot_2 = Text.new(
             0,
-            x: 991,
+            x: 966,
             y: 1,
             font: 'grejer/text.ttf',
-            style: 'bold',
-            size: text_power_size * 2,
+            size: text_power_size * 3,
             color: 'blue',
-            z: 0
+            z: 3
         )
 
         @game_started = true
@@ -157,83 +165,84 @@ class Game
     end
 
 end
-class Block 
 
-    attr_reader :block, :block_bg, :block_2, :block_bg_2, :block_3, :block_bg_3
+#klassen för alla block
+class Blocks
 
-    def initialize(level, i)
-        size = 150
+    attr_reader :block, :block_bg
+
+    def initialize(level, i, j)
+        size = 150.0
 
         if level == 1
 
             @block = Image.new(
                 'grejer/block.png',
                 x: i,
-                y: (Window.height / 2) - (size / 2),
-                z: 1,
+                y: (Window.height / 2.0) - (size / 2.0),
+                z: 2,
                 height: size,
-                width: size
+                width: size,
             )
             @block_bg = Image.new(
                 'grejer/block_bg.png',
                 x: i,
-                y: (Window.height / 2) - (size / 2),
-                z: 0,
+                y: (Window.height / 2.0) - (size / 2.0),
+                z: 1,
                 height: size * 1.046875,
                 width: size
             )
         elsif level == 2
-            @block_2 = Image.new(
+            @block = Image.new(
                 'grejer/block.png',
-                x: 1000,
-                y: (Window.height / 2) - (size / 2),
-                z: 1,
+                x: i,
+                y: j,
+                z: 2,
                 height: size,
-                width: size
+                width: size,
             )
-            @block_bg_2 = Image.new(
+            @block_bg = Image.new(
                 'grejer/block_bg.png',
-                x: 10000,
-                y: (Window.height / 2) - (size / 2),
-                z: 0,
+                x: i,
+                y: j,
+                z: 1,
                 height: size * 1.046875,
-                width: size
+                width: size,
             ) 
         elsif level == 3
-            @block_3 = Image.new(
+            @block = Image.new(
                 'grejer/block.png',
                 x: i,
-                y: (Window.height / 2) - (size / 2),
-                z: 1,
+                y: j,
+                z: 2,
                 height: size,
-                width: size
+                width: size,
             )
-            @block_bg_3 = Image.new(
+            @block_bg = Image.new(
                 'grejer/block_bg.png',
                 x: i,
-                y: (Window.height / 2) - (size / 2),
-                z: 0,
+                y: j,
+                z: 1,
                 height: size * 1.046875,
-                width: size
+                width: size,
             ) 
         end
     end
 
 end
 
+#startar igång allt
 game = Game.new(@change_in_size_ball, @ball_radius)
-player1 = Player.new(100, "yellow", @change_in_size_ball, @ball_radius)
-player2 = Player.new(991, "blue", @change_in_size_ball, @ball_radius)
+player1 = Player.new(100.0, "yellow", @change_in_size_ball, @ball_radius)
+player2 = Player.new(991.0, "blue", @change_in_size_ball, @ball_radius)
 
-j = 0
-i = (Window.width / 22)
+i = (Window.width / 22.0)
 
 @block_array = [
-    Block.new(@level, i + (Window.width / 22)),
-    Block.new(@level, i + 5*(Window.width / 22)*6),
-    Block.new(@level, i + (Window.width / 22)*11),
-    Block.new(@level, i + (Window.width / 22)*16)
-
+    Blocks.new(@level, i + (Window.width / 22.0), nil),
+    Blocks.new(@level, i + (Window.width / 22.0)*6.0, nil),
+    Blocks.new(@level, i + (Window.width / 22.0)*11.0, nil),
+    Blocks.new(@level, i + (Window.width / 22.0)*16.0, nil)
 ]
 
 #när man trycker på musen
@@ -262,7 +271,7 @@ on :mouse_down do |event|
 
         #ändrar position på pilen och lägger till den. VET INTE VARFÖR 63 MEN DET FUNGERADE
         player1.arrow.x = player1.golfboll.x - 2
-        player1.arrow.y = (player1.golfboll.y - ( 63 * @change_in_size_ball))
+        player1.arrow.y = (player1.golfboll.y - ( 63.0 * @change_in_size_ball))
         player1.arrow.add
 
         @mouse_down_on_ball_1 = true
@@ -282,13 +291,20 @@ on :mouse_down do |event|
 
         #ändrar position på pilen och lägger till den. VET INTE VARFÖR 63 MEN DET FUNGERADE
         player2.arrow.x = player2.golfboll.x - 2
-        player2.arrow.y = (player2.golfboll.y - ( 63 * @change_in_size_ball))
+        player2.arrow.y = (player2.golfboll.y - ( 63.0 * @change_in_size_ball))
         player2.arrow.add
 
         @mouse_down_on_ball_2 = true
 
     end
 
+    #restartar hela spelet om man klickar på en restart knapp på sista leveln
+    if @end_game == true
+        if @restart_button_0.contains?(event.x, event.y)
+            reset_whole_game
+        end
+    end
+    
 end
 
 #när man lyfter musen
@@ -300,7 +316,8 @@ on :mouse_up do |event|
 
     #räknar ut skillnaden i x och y led på när man tryckte och släppte musen
     change_in_x = @boll_position_x - current_x
-    change_in_y = @boll_position_y - current_y   
+    change_in_y = @boll_position_y - current_y  
+    
 
     #när man klickat på bollen och släpper musen
     if player1.golfboll.contains? @boll_position_x, @boll_position_y and @speed_1 == 0 and change_in_x.abs > 0.1 and change_in_y.abs > 0.1 and @mouse_down_on_ball_1 == true
@@ -369,7 +386,7 @@ on :mouse_up do |event|
         game.big_black_bar.remove
 
         #sätter farten och max fart
-        @speed_2 = (Math.sqrt(change_in_x **2 + change_in_y ** 2)) / 8
+        @speed_2 = (Math.sqrt(change_in_x **2.0 + change_in_y ** 2.0)) / 8.0
         if @speed_2 > @maxspeed
             @speed_2 = @maxspeed
         end
@@ -407,22 +424,22 @@ update do
         
         #hur mycket power man har och vad som visas då
         if @mouse_down_on_ball_1 == true
-            @cool = (Math.sqrt((@boll_position_x - Window.mouse_x.to_f) **2 + (@boll_position_y - Window.mouse_y.to_f) ** 2)) / (8.0 / (game.bar_height / @maxspeed))
+            @cool = (Math.sqrt((@boll_position_x - Window.mouse_x.to_f) **2.0 + (@boll_position_y - Window.mouse_y.to_f) ** 2.0)) / (8.0 / (game.bar_height / @maxspeed))
             
             if @cool + 10 < game.bar_height
-                game.yellow_bar.y = ((Window.height / 2) + ((game.bar_height - 10) / 2)) - @cool
+                game.yellow_bar.y = ((Window.height / 2) + ((game.bar_height - 10) / 2.0)) - @cool
                 game.yellow_bar.height = @cool
                 @text_cool = ((@cool + 10) / game.bar_height).round(2)
                 game.text_power.text = "#{@text_cool}%"
             else 
-                game.yellow_bar.y = game.yellow_bar.y = ((Window.height / 2) + ((game.bar_height - 10) / 2)) - (game.bar_height - 10)
+                game.yellow_bar.y = game.yellow_bar.y = ((Window.height / 2.0) + ((game.bar_height - 10) / 2.0)) - (game.bar_height - 10)
                 game.yellow_bar.height = game.bar_height - 10
                 game.text_power.text ="1.00%"
 
             end
 
             #var pilen är och pekar för boll 1
-            old_angle = 180
+            old_angle = 180.0
             if @speed_1 == 0
                 current_x = Window.mouse_x.to_f
                 current_y = Window.mouse_y.to_f
@@ -431,7 +448,7 @@ update do
                 change_in_y = @boll_position_y - current_y 
 
                 arc_tangent = Math.atan2(change_in_x, change_in_y)
-                arc_tangent_degrees = arc_tangent * (180 / Math::PI)
+                arc_tangent_degrees = arc_tangent * (180.0 / Math::PI)
                 arc_tangent_degrees = -arc_tangent_degrees
 
                 player1.arrow.rotate = old_angle + arc_tangent_degrees
@@ -455,7 +472,7 @@ update do
             end
 
             #var pilen är och pekar för boll 2
-            old_angle = 180
+            old_angle = 180.0
             if @speed_2 == 0
                 current_x = Window.mouse_x.to_f
                 current_y = Window.mouse_y.to_f
@@ -464,7 +481,7 @@ update do
                 change_in_y = @boll_position_y - current_y 
 
                 arc_tangent = Math.atan2(change_in_x, change_in_y)
-                arc_tangent_degrees = arc_tangent * (180 / Math::PI)
+                arc_tangent_degrees = arc_tangent * (180.0 / Math::PI)
                 arc_tangent_degrees = -arc_tangent_degrees
 
                 player2.arrow.rotate = old_angle + arc_tangent_degrees
@@ -476,20 +493,21 @@ update do
         #om man träffar hålet
         if game.hole.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y + @ball_radius
             @speed_1 = 0
-            player1.golfboll.x = 1000
+            player1.golfboll.x = 10000
             player1.golfboll.remove
             player1.golfboll_skugga.remove
-            in_hole(game, player1, player2, block_cla)
-        elsif game.hole.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + @ball_radius
+            in_hole(game, player1, player2)
+        end
+        if game.hole.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + @ball_radius
             @speed_2 = 0
-            player2.golfboll.x = 1000
+            player2.golfboll.x = 10000
             player2.golfboll.remove
             player2.golfboll_skugga.remove
-            in_hole(game, player1, player2, block_cla)
+            in_hole(game, player1, player2)
 
         end
 
-        #nuddar något
+        #nuddar vägg?
         for i in 0..36 do
 
             #nuddar väggen ska bollen byta rikting
@@ -543,18 +561,23 @@ update do
                 player2.golfboll.y += 6
                 player2.golfboll_skugga.y += 6
             end
-    
-            #nuddar blocket ska bollen byta rikting
-            #if game.block.contains? x_player_1 + cos, y_player_1 + sin
-        
-               # @speed_y_1 = -@speed_y_1
-            #elsif game.block.contains? player1.golfboll.x, player1.golfboll.y + @ball_radius or game.block.contains? player1.golfboll.x + (@ball_radius * 2), player1.golfboll.y + @ball_radius 
-                #@speed_x_1 = -@speed_x_1
-           #elsif game.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y or game.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + (@ball_radius * 2)
-                #@speed_y_2 = -@speed_y_2
-           # elsif game.block.contains? player2.golfboll.x, player2.golfboll.y + @ball_radius or game.block.contains? player2.golfboll.x + (@ball_radius * 2), player2.golfboll.y + @ball_radius 
-               # @speed_x_2 = -@speed_x_2
-            #end
+        end
+
+        #nuddar block ska bollen byta rikting
+        @block_array.each do |blocks|
+
+            if blocks.block.contains? player1.golfboll.x, player1.golfboll.y + @ball_radius or blocks.block.contains? player1.golfboll.x + (@ball_radius * 2), player1.golfboll.y + @ball_radius 
+               @speed_x_1 = -@speed_x_1
+            end
+            if blocks.block.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y or blocks.block.contains? player1.golfboll.x + @ball_radius, player1.golfboll.y + (@ball_radius * 2)
+               @speed_y_1 = -@speed_y_1
+            end
+            if blocks.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y or blocks.block.contains? player2.golfboll.x + @ball_radius, player2.golfboll.y + (@ball_radius * 2)
+               @speed_y_2 = -@speed_y_2
+            end
+            if blocks.block.contains? player2.golfboll.x, player2.golfboll.y + @ball_radius or blocks.block.contains? player2.golfboll.x + (@ball_radius * 2), player2.golfboll.y + @ball_radius 
+               @speed_x_2 = -@speed_x_2
+            end
 
         end
 
@@ -599,7 +622,8 @@ update do
         player2.golfboll_skugga.y += @speed_y_2 / @bob_2
     end
 
-    def in_hole(game, player1, player2, block_cla)
+    #om bollen nuddar hålet startas denna funktion 
+    def in_hole(game, player1, player2)
 
         HOLE.play
     
@@ -608,21 +632,37 @@ update do
             @level += 1
             case @level
             when 2
-                level2(game, player1, player2, block_cla)
+                level2(game, player1, player2)
             when 3
-                level3(game, player1, player2, block_cla)
+                level3(game, player1, player2)
+            when 4
+                level4(game, player1, player2)
             end
         end
-
     end
     
-    def level2(game, player1, player2, block_cla)
+    #level 2 körs
+    def level2(game, player1, player2)
+        
+        @block_array.each do |block|
+            block.block_bg.remove
+            block.block.remove
+        end
 
-        block_cla.block.remove
-        block_cla.block_bg.remove
-        i = 100
-        @block_cla = Block.new(@level, i)
+        i = (Window.width / 22.0)
+        j = (Window.height / 15.0)
 
+        @block_array = [
+            Blocks.new(@level, 3.0*i, 3.0*j),
+            Blocks.new(@level, 3.0*i, 9.0*j),
+
+            Blocks.new(@level, 9.5*i, 6.0*j),
+
+            Blocks.new(@level, 16.0*i, 3.0*j),
+            Blocks.new(@level, 16.0*i, 9.0*j),
+
+        ]
+        
         @total_shot_1 = @shot_1
         @total_shot_2 = @shot_2
     
@@ -632,65 +672,172 @@ update do
         game.text_shot_1.text = "#{@shot_1}"
         game.text_shot_2.text = "#{@shot_2}"
 
+        game.hole.x = (Window.width / (22.0/20.0))
+        game.hole.y = ((Window.height / 2.0) - (game.hole_size / 2.0))
+
         player1.golfboll.add
         player1.golfboll_skugga.add
-        player1.golfboll.x = (Window.width / 11) - @ball_radius
-        player1.golfboll.y = (Window.height / 5) - @ball_radius
-        player1.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player1.golfboll_skugga.y = (Window.height / 5) - @ball_radius +6
+        player1.golfboll.x = (Window.width / (22 / 1.5)) - @ball_radius
+        player1.golfboll.y = (Window.height / (10.0/3.0)) - @ball_radius
+        player1.golfboll_skugga.x = (Window.width / (22 / 1.5)) - @ball_radius
+        player1.golfboll_skugga.y = (Window.height / (10.0/3.0)) - @ball_radius +6
 
         player2.golfboll.add
         player2.golfboll_skugga.add
-        player2.golfboll.x = (Window.width / 11) - @ball_radius
-        player2.golfboll.y = (Window.height / (15.0/12.0)) - @ball_radius
-        player2.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius + 6
+        player2.golfboll.x = (Window.width / (22 / 1.5)) - @ball_radius
+        player2.golfboll.y = (Window.height / (15.0/10.5)) - @ball_radius
+        player2.golfboll_skugga.x = (Window.width / (22 / 1.5)) - @ball_radius
+        player2.golfboll_skugga.y = (Window.height / (15.0/10.5)) - @ball_radius + 6
 
         @level_counter = 0
 
-        return block_cla.block
-
     end
 
-    def level3(game, player1, player2, block_cla)
+    #level 3 körs
+    def level3(game, player1, player2)
 
-        @block_cla.block_2.remove
-        @block_cla.block_bg_2.remove
-        i = 100
-        block_cla = Block.new(@level, i)
+        @block_array.each do |block|
+            block.block_bg.remove
+            block.block.remove
+        end
+    
+        i = (Window.width / 22.0)
+        j = (Window.height / 15.0)    
+        @block_array = [
+            Blocks.new(@level, 7.5*i, 8*j),
+            Blocks.new(@level, 7.5*i, 4*j),
+            Blocks.new(@level, 11.5*i, 4*j),
+            Blocks.new(@level, 11.5*i, 8*j),
+
+            Blocks.new(@level, 9.5*i, 12*j),
+            Blocks.new(@level, 3.0*i, 6*j),
+            Blocks.new(@level, 16.0*i, 6*j),
+            Blocks.new(@level, 9.5*i, 0*j),
+        ]
     
         @total_shot_1 += @shot_1
         @total_shot_2 += @shot_2
     
         @shot_2 = 0
         @shot_1 = 0
-
+    
         game.text_shot_1.text = "#{@shot_1}"
         game.text_shot_2.text = "#{@shot_2}"
+    
+        game.hole.x = (Window.width / (22.0/10.5))
+        game.hole.y = ((Window.height / 2.0) - (game.hole_size / 2.0))
 
         player1.golfboll.add
-        player1.golfboll_skugga.add
+        player1.golfboll_skugga.add 
         player1.golfboll.x = (Window.width / 11) - @ball_radius
-        player1.golfboll.y = (Window.height / 5) - @ball_radius
+        player1.golfboll.y = (Window.height / (15.0/13.0)) - @ball_radius
         player1.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player1.golfboll_skugga.y = (Window.height / 5) - @ball_radius + 6
-
+        player1.golfboll_skugga.y = (Window.height / (15.0/13.0)) - @ball_radius + 6
+    
         player2.golfboll.add
         player2.golfboll_skugga.add
-        player2.golfboll.x = (Window.width / 11) - @ball_radius
-        player2.golfboll.y = (Window.height / (15.0/12.0)) - @ball_radius
-        player2.golfboll_skugga.x = (Window.width / 11) - @ball_radius
-        player2.golfboll_skugga.y = (Window.height / (15.0/12.0)) - @ball_radius + 6
+        player2.golfboll.x = (Window.width / (22.0/20.0)) - @ball_radius
+        player2.golfboll.y = (Window.height / (15.0/13.0)) - @ball_radius
+        player2.golfboll_skugga.x = (Window.width / (22.0/20.0)) - @ball_radius
+        player2.golfboll_skugga.y = (Window.height / (15.0/13.0)) - @ball_radius + 6
+    
+        @level_counter = 0
+
+    
+    end
+
+    #level 4 körs
+    def level4(game, player1, player2)
+
+        @end_game = true
+
+        @restart_button_0 = Image.new('grejer/restart.png',  width: 20, height: 20, x: 2, y: 2, z:1)
+
+        @total_shot_1 += @shot_1
+        @total_shot_2 += @shot_2
+
+        @shot_1 = 0
+        @shot_2 = 0
+
+        game.hole.remove
+        @block_array.each do |block|
+            block.block_bg.remove
+            block.block.remove
+        end
+
+        game.text_shot_1.remove
+        game.text_shot_2.remove
+
+        text_size_end_2 = 50.0
+
+        @text_1 = Text.new(
+            "Player one = #{@total_shot_1} strokes",
+            x: (Window.width / (22.0/7.0)),
+            y: (Window.height / 2.0) - (text_size_end_2),
+            font: 'grejer/text.ttf',
+            size: text_size_end_2,
+            color: 'black',
+            z: 1
+        )
+        @text_2 = Text.new(
+            "Player two = #{@total_shot_2} strokes",
+            x: (Window.width / (22.0/7.0)),
+            y: (Window.height / 2.0),
+            font: 'grejer/text.ttf',
+            size: text_size_end_2,
+            color: 'black',
+            z: 1
+        )
+
+        if @total_shot_1 < @total_shot_2
+            @winner = "player one"
+        elsif @total_shot_1 > @total_shot_2
+            @winner = "player two"
+        else
+            @winner = "Tie"
+        end
+
+        @text_3 = Text.new(
+            "Winner = #{@winner}",
+            x: (Window.width / (22.0/7.0)),
+            y: (Window.height / 2.0) + (text_size_end_2),
+            font: 'grejer/text.ttf',
+            size: text_size_end_2,
+            color: 'black',
+            z: 1
+        )
 
         @level_counter = 0
 
     end
 
-    def level4(game, player1, player2, block)
+    def reset_whole_game
 
-        game.hole.remove
+        @end_game = false
+
+        @text_1.remove
+        @text_2.remove
+        @text_3.remove
+
+        @restart_button_0.remove
+
+        @level = 1
+        #startar igång allt
+        game = Game.new(@change_in_size_ball, @ball_radius)
+        player1 = Player.new(100.0, "yellow", @change_in_size_ball, @ball_radius)
+        player2 = Player.new(991.0, "blue", @change_in_size_ball, @ball_radius)
+
+        i = (Window.width / 22.0)
+
+        @block_array = [
+            Blocks.new(@level, i + (Window.width / 22.0), nil),
+            Blocks.new(@level, i + (Window.width / 22.0)*6.0, nil),
+            Blocks.new(@level, i + (Window.width / 22.0)*11.0, nil),
+            Blocks.new(@level, i + (Window.width / 22.0)*16.0, nil)
+        ]
 
     end
+
 end
  
 show
