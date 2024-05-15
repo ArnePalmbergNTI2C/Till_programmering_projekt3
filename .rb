@@ -1,5 +1,3 @@
-#göra klart programmet
-#kommentera allt
 #filma
 #skriva reflektion
 
@@ -301,7 +299,7 @@ on :mouse_down do |event|
     #restartar hela spelet om man klickar på en restart knapp på sista leveln
     if @end_game == true
         if @restart_button_0.contains?(event.x, event.y)
-            reset_whole_game
+            reset_whole_game(game, player1, player2)
         end
     end
     
@@ -631,6 +629,7 @@ update do
         if @level_counter == 2
             @level += 1
             case @level
+                #beroende på level startas en ny level
             when 2
                 level2(game, player1, player2)
             when 3
@@ -751,7 +750,7 @@ update do
 
         @end_game = true
 
-        @restart_button_0 = Image.new('grejer/restart.png',  width: 20, height: 20, x: 2, y: 2, z:1)
+        @restart_button_0 = Image.new('grejer/restart.png',  width: 40, height: 40, x: 2, y: 2, z:1)
 
         @total_shot_1 += @shot_1
         @total_shot_2 += @shot_2
@@ -811,7 +810,8 @@ update do
 
     end
 
-    def reset_whole_game
+    #resetar hela spelet om man klarat det
+    def reset_whole_game(game, player1, player2)
 
         @end_game = false
 
@@ -822,10 +822,26 @@ update do
         @restart_button_0.remove
 
         @level = 1
-        #startar igång allt
-        game = Game.new(@change_in_size_ball, @ball_radius)
-        player1 = Player.new(100.0, "yellow", @change_in_size_ball, @ball_radius)
-        player2 = Player.new(991.0, "blue", @change_in_size_ball, @ball_radius)
+
+        game.hole.x = (Window.width / 2.0) - (game.hole_size / 2.0)
+        game.hole.y = ((Window.height / 5.0) - (game.hole_size / 2.0))
+
+        player1.golfboll.x = 100
+        player1.golfboll.y = Window.height - (Window.height / 5.0) - @ball_radius
+        player1.golfboll_skugga.x = 100
+        player1.golfboll_skugga.y = Window.height - (Window.height / 5.0) - @ball_radius + 6
+    
+        player2.golfboll.x = 991 - @ball_radius
+        player2.golfboll.y = Window.height - (Window.height / 5.0) - @ball_radius
+        player2.golfboll_skugga.x = 991 - @ball_radius
+        player2.golfboll_skugga.y = Window.height - (Window.height / 5.0) - @ball_radius + 6
+
+        player1.golfboll.add
+        player2.golfboll.add
+        game.hole.add
+
+        game.text_shot_1.add
+        game.text_shot_2.add
 
         i = (Window.width / 22.0)
 
