@@ -790,7 +790,7 @@ update do
             y: (Window.height / 2.0) - (text_size_end_2) - 28,
             font: 'grejer/text.ttf',
             size: text_size_end_2,
-            color: 'black',
+            color: 'yellow',
             z: 1
         )
         @text_2 = Text.new(
@@ -799,7 +799,7 @@ update do
             y: (Window.height / 2.0) - 28,
             font: 'grejer/text.ttf',
             size: text_size_end_2,
-            color: 'black',
+            color: 'blue',
             z: 1
         )
 
